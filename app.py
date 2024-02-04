@@ -137,7 +137,11 @@ def rag_query(question: str) -> str:
     })
 
     response = requests.post(url, payload, headers={"content-type": 'application/json', 'x-api-key': ''})
-    answer = response.json()[0]['generated_text'].replace(text_input, '')
+    if type(response.json()) == list:
+        answer = response.json()[0]['generated_text'].replace(text_input, '')
+    else:
+        answer = ("Your question took more than 29 seconds for the API call which caused an 'Endpoint request timed "
+                  "out' exception as AWS currently allows only 29 seconds timeout limit.")
     return answer
 
 
@@ -160,6 +164,7 @@ if __name__ == "__main__":
 
     # Create a text area to display the chatbot's response
     chatbot_response = st.empty()
+
 
     # Define the function to send the user's message to the chatbot and display the response
     def send_message(user_input):
